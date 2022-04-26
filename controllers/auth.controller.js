@@ -1,11 +1,10 @@
-const Customer = require("../models/Customer");
-const Bookstore = require("../models/Bookstore");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.register = async (req, res, next) => {
     try {
-        const user = await Customer.create(req.body);
+        const user = await User.create(req.body);
         res.status(200).json({
             status: "success",
             data: {
