@@ -57,10 +57,7 @@ exports.deleteProduct = async (req, res, next) => {
 
 exports.getAllProduct = async (req, res, next) => {
     try {
-        console.log("entry");
         const productArr = await Product.find({});
-        console.log("find");
-        console.log(productArr);
         res.status(200).json({
             status: "success",
             length: productArr.length,
