@@ -26,17 +26,18 @@ const productSchema = new mongoose.Schema(
             type: Array,
             minItems: [1, "Category must includes at least 1 item"],
         },
-        stock: { type: Number, min: [0, "Invalid number"] },
+        countInStock: { type: Number, min: [0, "Invalid number"] },
         discount: { type: Number },
         review: {
             type: [
                 {
                     customerId: { type: String },
                     comment: { type: String },
-                    ranking: { type: Number, min: 1, max: 5 },
+                    rating: { type: Number, min: 1, max: 5 },
                 },
             ],
         },
+        rating: { type: Number },
     },
     { timestamps: true }
 );

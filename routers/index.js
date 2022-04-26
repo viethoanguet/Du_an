@@ -5,11 +5,11 @@ const cartRoute = require("./cart.route");
 const orderRoute = require("./order.route");
 
 route = (app) => {
-    app.use("/auth", authRoute);
-    app.use("/users", userRoute);
-    app.use("/products", productRoute);
-    app.use("/cart", cartRoute);
-    app.use("/orders", orderRoute);
+    app.use("/v1/auth", authRoute);
+    app.use("/v1/users", userRoute);
+    app.use("/v1/products", productRoute);
+    app.use("/v1/cart", cartRoute);
+    app.use("/v1/orders", orderRoute);
 };
 
 module.exports = route;
