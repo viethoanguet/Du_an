@@ -53,4 +53,6 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
     // code
+    res.status(200).json(
+        { status: "dang xuat thanh cong"})
 };
