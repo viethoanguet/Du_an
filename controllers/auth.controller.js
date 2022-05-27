@@ -4,13 +4,20 @@ const bcrypt = require("bcryptjs");
 
 exports.register = async (req, res, next) => {
     try {
-        const user = await User.create(req.body);
+        const user = await User.create({
+            ...req.body,
+            avatar: null,
+            isEmailVerified: false,
+            isContactVerified: false,
+            isActive: true,
+            role: "user",
+            contact: null,
+        });
         res.status(200).json({
             status: "success",
+            message: "Register Success",
             data: {
-                username: req.body.username,
-                password: req.body.password,
-                email: req.body.email,
+                user,
             },
         });
     } catch (error) {
@@ -21,11 +28,11 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const user = await User.findOne({
-            username: req.body.username,
+            email: req.body.email,
         });
         if (!user) {
             res.status(400).json({
-                status: "error",
+                status: "email not available",
             });
         }
         if (bcrypt.compareSync(req.body.password, user.password)) {
@@ -35,6 +42,7 @@ exports.login = async (req, res, next) => {
             );
             res.status(200).json({
                 status: "success",
+                message: "Login Success",
                 data: {
                     token,
                     username: user.username,
@@ -43,7 +51,7 @@ exports.login = async (req, res, next) => {
             });
         } else {
             res.status(400).json({
-                status: "error2",
+                status: "error 2",
             });
         }
     } catch (error) {
@@ -53,6 +61,18 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
     // code
-    res.status(200).json(
-        { status: "dang xuat thanh cong"})
+    res.status(200).json({
+        message: "Logout Success",
+    });
+};
+
+exports.forgotPassword = async (req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+        }
+        res.status(200).json({
+            message: "Check new password in your email",
+        });
+    } catch (error) {}
 };

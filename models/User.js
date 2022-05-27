@@ -3,18 +3,11 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
     {
-        name: {
+        contact: {
             type: String,
             trim: true,
-            required: [true, "Name must be required"],
         },
-        phone: {
-            type: String,
-            unique: true,
-            trim: true,
-            required: [true, "Phone must be required"],
-        },
-        avatar: { type: String },
+        avatar: { type: String, trim: true },
         email: {
             type: String,
             unique: true,
@@ -33,9 +26,11 @@ const userSchema = new mongoose.Schema(
             required: [true, "Password must be required"],
             minlength: [8, "Password must be at least 8 characters"],
         },
-        status: { type: Boolean, required: [true, "status must be required"] },
         role: { type: String, required: [true, "role must be required"] },
-        cart: { type: String },
+        isEmailVerified: { type: Boolean, required: true },
+        isContactVerified: { type: Boolean, required: true },
+        isActive: { type: Boolean, required: true },
+        cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" },
     },
     { timestamps: true }
 );

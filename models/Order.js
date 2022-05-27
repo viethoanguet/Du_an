@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
     {
-        userId: { type: String },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         paymentMethod: { type: String },
         delivery: { type: Number },
         status: { type: String, enum: [complete, pending, processing] },
@@ -10,7 +10,10 @@ const orderSchema = new mongoose.Schema(
         itemArr: {
             type: [
                 {
-                    productId: { type: String },
+                    productId: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Product",
+                    },
                     quantity: { type: Number, min: 1 },
                 },
             ],

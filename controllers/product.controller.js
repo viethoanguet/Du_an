@@ -55,28 +55,56 @@ exports.deleteProduct = async (req, res, next) => {
     }
 };
 
-exports.getAllProduct = async (req, res, next) => {
+exports.queryProduct = async (req, res, next) => {
     try {
-        const productArr = await Product.find({});
+        const query = req.query;
+        const products = await Product.find(query);
         res.status(200).json({
             status: "success",
-            length: productArr.length,
-            data: { productArr },
+            length: products.length,
+            data: { products },
         });
     } catch (error) {
         res.json(error);
     }
 };
 
-// exports.getAllProductInfo = async (req, res, next) => {
-//     try {
-//         const products = await Product.find({});
-//         res.status(200).json({
-//             status: 'success',
-//             result: products.length,
-//             data: {products}
-//         })
-//     } catch (error) {
-//         res.json(error);
-//     }
-// }
+exports.reviewProduct = async (req, res, next) => {
+    try {
+        const { userId } = req.user;
+        const { productId, rating, content } = req.body;
+        const { review } = await Product.findById(productId).select(
+            "review.rate review.length"
+        );
+
+        // const { rate, length } = review;
+        console.log(review);
+        // rate = (rate * length + rating) / (length + 1);
+        // length = length + 1;
+        // console.log(rate, length);
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            {
+                rate: rate,
+                length: length,
+                $push: {
+                    "review.data": {
+                        userId: userId,
+                        comment: content,
+                        rating: rating,
+                    },
+                },
+            },
+            { new: true, runValidators: true }
+        ).select("review");
+        res.status(200).json({
+            status: "success",
+            message: "Review success",
+            data: {
+                product,
+            },
+        });
+    } catch (error) {
+        res.json(error);
+    }
+};

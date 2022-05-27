@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Float = require("mongoose-float").loadType(mongoose);
 
 const productSchema = new mongoose.Schema(
     {
@@ -15,7 +16,6 @@ const productSchema = new mongoose.Schema(
         },
         images: {
             type: Array,
-            minlength: [1, "need at least 1 photo for this product"],
         },
         price: { type: Number, required: [true, "Price must be required"] },
         description: {
@@ -29,15 +29,21 @@ const productSchema = new mongoose.Schema(
         countInStock: { type: Number, min: [0, "Invalid number"] },
         discount: { type: Number },
         review: {
-            type: [
-                {
-                    customerId: { type: String },
-                    comment: { type: String },
-                    rating: { type: Number, min: 1, max: 5 },
-                },
-            ],
+            type: {
+                rate: { type: Float, default: 0 },
+                length: { type: Float, default: 0 },
+                data: [
+                    {
+                        userId: {
+                            type: mongoose.Schema.Types.ObjectId,
+                            ref: "User",
+                        },
+                        rating: { type: Number },
+                        comment: { type: String },
+                    },
+                ],
+            },
         },
-        rating: { type: Number },
     },
     { timestamps: true }
 );
