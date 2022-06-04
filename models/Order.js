@@ -1,18 +1,17 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
     {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         paymentMethod: { type: String },
-        delivery: { type: Number },
-        status: { type: String, enum: [complete, pending, processing] },
-        address: { type: String, required: [true, "address must be required"] },
+        status: { type: String, required: [true, 'Chưa thiết lập trạng thái'] },
+        address: { type: String, required: [true, 'Thiếu địa chỉ giao hàng'] },
         itemArr: {
             type: [
                 {
                     productId: {
                         type: mongoose.Schema.Types.ObjectId,
-                        ref: "Product",
+                        ref: 'Product',
                     },
                     quantity: { type: Number, min: 1 },
                 },
@@ -23,6 +22,6 @@ const orderSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;

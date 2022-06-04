@@ -1,16 +1,17 @@
-const express = require("express");
-const product = require("../controllers/product.controller");
-const { verifyToken } = require("../middlewares/verifyToken");
+const express = require('express');
+const product = require('../controllers/product.controller');
+const { verifyToken } = require('../middlewares/verifyToken');
+const { adminAuth } = require('../middlewares/adminPortal');
 
 const Router = express.Router();
 
-Router.route("/")
+Router.route('/')
     .get(product.queryProduct)
-    .post(verifyToken, product.createProduct);
-Router.route("/:productId")
+    .post(verifyToken, adminAuth, product.createProduct);
+Router.route('/:productId')
     .get(product.getProduct)
-    .put(verifyToken, product.updateProduct)
-    .delete(verifyToken, product.deleteProduct);
-Router.route("/:productId/reviews").post(verifyToken, product.reviewProduct);
+    .put(verifyToken, adminAuth, product.updateProduct)
+    .delete(verifyToken, adminAuth, product.deleteProduct);
+Router.route('/:productId/reviews').post(verifyToken, product.reviewProduct);
 
 module.exports = Router;

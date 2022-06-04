@@ -1,27 +1,35 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { dataFilter } = require("../middlewares/dataFilter");
 
 exports.register = async (req, res, next) => {
     try {
-        const user = await User.create({
-            ...req.body,
+        const dataCheck = dataFilter(req.body, {
+            email: "string",
+            username: "string",
+            password: "string",
+        });
+        const document = {
+            ...dataCheck,
             avatar: null,
             isEmailVerified: false,
             isContactVerified: false,
             isActive: true,
             role: "user",
             contact: null,
-        });
+        };
+        const user = await User.create(document);
         res.status(200).json({
             status: "success",
-            message: "Register Success",
+            type: typeof user,
+            message: "Đăng ký thành công",
             data: {
                 user,
             },
         });
     } catch (error) {
-        res.json(error);
+        next(error);
     }
 };
 
@@ -31,39 +39,42 @@ exports.login = async (req, res, next) => {
             email: req.body.email,
         });
         if (!user) {
-            res.status(400).json({
-                status: "email not available",
-            });
+            const err = new Error("Email không tồn tại");
+            err.statusCode = 400;
+            return next(err);
         }
         if (bcrypt.compareSync(req.body.password, user.password)) {
             const token = jwt.sign(
-                { userId: user._id, userRole: user.role },
+                { userId: user._id, role: user.role },
                 process.env.APP_SECRET
             );
             res.status(200).json({
                 status: "success",
-                message: "Login Success",
+                message: "Đăng nhập thành công",
                 data: {
                     token,
                     username: user.username,
-                    email: user.email,
+                    role: user.role,
                 },
             });
         } else {
-            res.status(400).json({
-                status: "error 2",
-            });
+            const err = new Error("Mật khẩu không đúng");
+            err.statusCode = 400;
+            return next(err);
         }
     } catch (error) {
-        res.json(error);
+        next(error);
     }
 };
 
 exports.logout = async (req, res, next) => {
-    // code
-    res.status(200).json({
-        message: "Logout Success",
-    });
+    try {
+        res.status(200).json({
+            status: "success",
+            message: "Đăng xuất thành công",
+            data: null,
+        });
+    } catch (error) {}
 };
 
 exports.forgotPassword = async (req, res, next) => {
@@ -74,5 +85,7 @@ exports.forgotPassword = async (req, res, next) => {
         res.status(200).json({
             message: "Check new password in your email",
         });
-    } catch (error) {}
+    } catch (error) {
+        next(error);
+    }
 };

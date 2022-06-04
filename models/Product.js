@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Float = require("mongoose-float").loadType(mongoose);
 
 const productSchema = new mongoose.Schema(
     {
@@ -24,14 +23,14 @@ const productSchema = new mongoose.Schema(
         },
         category: {
             type: Array,
-            minItems: [1, "Category must includes at least 1 item"],
+            // minItems: [1, "Category must includes at least 1 item"],
         },
         countInStock: { type: Number, min: [0, "Invalid number"] },
         discount: { type: Number },
         review: {
             type: {
-                rate: { type: Float, default: 0 },
-                length: { type: Float, default: 0 },
+                rate: { type: Number, default: 0 },
+                length: { type: Number, default: 0 },
                 data: [
                     {
                         userId: {

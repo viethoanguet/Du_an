@@ -10,6 +10,8 @@ const route = require("./routers");
 const express = require("express");
 const cors = require("cors");
 
+const { errorHandler } = require("./middlewares/errorHandler");
+
 const app = express();
 
 // Cors
@@ -20,6 +22,8 @@ app.use(express.json());
 
 //Routing
 route(app);
+
+app.use(errorHandler);
 
 const port = process.env.APP_PORT;
 
