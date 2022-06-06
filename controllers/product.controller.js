@@ -72,53 +72,6 @@ exports.updateProduct = async (req, res, next) => {
     }
 };
 
-// exports.getUser = async (req, res, next) => {
-//     try {
-//         const { userId } = req.params;
-//         const filter =
-//             "avatar contact email username role isEmailVerified isContactVerified isActive";
-//         const user = await User.findById(userId, filter);
-//         res.status(200).json({
-//             status: "success",
-//             type: "object",
-//             message: "Lấy thông tin người dùng thành công",
-//             data: { user },
-//         });
-//     } catch (error) {
-//         res.json(error);
-//     }
-// };
-
-// exports.updateUser = async (req, res, next) => {
-//     try {
-//         const { userId } = req.params;
-//         const document = dataFilter(req.body, {
-//             contact: "string",
-//             avatar: "string",
-//             email: "string",
-//             isContactVerified: "boolean",
-//             isEmailVerified: "boolean",
-//             isActive: "boolean",
-//         });
-//         const filter =
-//             "avatar contact email username role isEmailVerified isContactVerified isActive";
-//         const user = await User.findByIdAndUpdate(userId, document, {
-//             new: true,
-//             runValidators: true,
-//         }).select(filter);
-//         res.status(200).json({
-//             status: "success",
-//             type: "object",
-//             message: "Cập nhật thông tin người dùng thành công",
-//             data: {
-//                 user,
-//             },
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
 exports.deleteProduct = async (req, res, next) => {
     try {
         const { productId } = req.params;
@@ -141,9 +94,9 @@ exports.queryProduct = async (req, res, next) => {
             price: 'number',
             category: 'string',
         });
-        // const filter =
-        //     "name brand images price description category countInStock isActive";
-        const products = await Product.find(query);
+        const filter =
+            'name brand images price description category countInStock';
+        const products = await Product.find(query, filter);
         if (products.length !== 0) {
             res.status(200).json({
                 status: 'success',

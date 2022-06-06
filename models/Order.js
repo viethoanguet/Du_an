@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema(
         paymentMethod: { type: String },
         status: { type: String, required: [true, 'Chưa thiết lập trạng thái'] },
         address: { type: String, required: [true, 'Thiếu địa chỉ giao hàng'] },
+        contact: { type: String, required: [true, 'THiếu thông tin liên lạc'] },
         itemArr: {
             type: [
                 {

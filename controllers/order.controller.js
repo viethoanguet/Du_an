@@ -7,6 +7,7 @@ exports.createOrder = async (req, res, next) => {
         const dataCheck = dataFilter(req.body, {
             paymentMethod: 'string',
             address: 'string',
+            contact: 'string',
             itemArr: 'array',
         });
         const document = {
@@ -22,6 +23,22 @@ exports.createOrder = async (req, res, next) => {
             data: {
                 order,
             },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getMyOrders = async (req, res, next) => {
+    try {
+        const { userId } = req.user;
+        const orders = await Order.find({ userId: userId });
+        res.status(200).json({
+            status: 'success',
+            type: 'array',
+            length: orders.length,
+            message: 'Lấy đơn hàng thành công',
+            data: { orders },
         });
     } catch (error) {
         next(error);
@@ -45,12 +62,12 @@ exports.getOrder = async (req, res, next) => {
 
 exports.updateOrder = async (req, res, next) => {
     try {
-        const { orderId } = req.order;
+        const { orderId } = req.params;
         const dataCheck = dataFilter(req.body, {
             status: 'string',
         });
         let document = dataCheck;
-        const order = await Order.findByIdAndUpdate(order, document, {
+        const order = await Order.findByIdAndUpdate(orderId, document, {
             new: true,
             runValidators: true,
         });
@@ -59,53 +76,6 @@ exports.updateOrder = async (req, res, next) => {
             type: 'object',
             message: 'Cập nhật giỏ hàng thành công',
             data: { order },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-exports.getUser = async (req, res, next) => {
-    try {
-        const { userId } = req.params;
-        const filter =
-            'avatar contact email username role isEmailVerified isContactVerified isActive';
-        const user = await User.findById(userId, filter);
-        res.status(200).json({
-            status: 'success',
-            type: 'object',
-            message: 'Lấy thông tin người dùng thành công',
-            data: { user },
-        });
-    } catch (error) {
-        res.json(error);
-    }
-};
-
-exports.updateUser = async (req, res, next) => {
-    try {
-        const { userId } = req.params;
-        const document = dataFilter(req.body, {
-            contact: 'string',
-            avatar: 'string',
-            email: 'string',
-            isContactVerified: 'boolean',
-            isEmailVerified: 'boolean',
-            isActive: 'boolean',
-        });
-        const filter =
-            'avatar contact email username role isEmailVerified isContactVerified isActive';
-        const user = await User.findByIdAndUpdate(userId, document, {
-            new: true,
-            runValidators: true,
-        }).select(filter);
-        res.status(200).json({
-            status: 'success',
-            type: 'object',
-            message: 'Cập nhật thông tin người dùng thành công',
-            data: {
-                user,
-            },
         });
     } catch (error) {
         next(error);
@@ -127,7 +97,7 @@ exports.deleteOrder = async (req, res, next) => {
     }
 };
 
-exports.queryUser = async (req, res, next) => {
+exports.queryOrders = async (req, res, next) => {
     try {
         const query = dataFilter(req.query, {
             status: 'string',

@@ -18,6 +18,7 @@ exports.createCart = async (req, res, next) => {
         next(error);
     }
 };
+
 exports.showMyCart = async (req, res, next) => {
     // code
     try {
@@ -28,6 +29,42 @@ exports.showMyCart = async (req, res, next) => {
             type: 'object',
             message: 'Lấy giỏ hàng thành công',
             data: { cart },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.updateMyCart = async (req, res, next) => {
+    try {
+        const { userId } = req.user;
+        const { itemArr } = req.body;
+        const cart = await Cart.findOneAndUpdate(
+            { userId: userId },
+            { itemArr: itemArr },
+            { new: true, runValidators: true }
+        );
+        res.status(200).json({
+            status: 'success',
+            type: 'object',
+            message: 'Cập nhật giỏ hàng thành công',
+            data: { cart },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.deleteMyCart = async (req, res, next) => {
+    try {
+        const { userId } = req.user;
+        await Cart.findOneAndDelete({ userId: userId });
+        await User.findByIdAndUpdate(userId, { $unset: { cart: 1 } });
+        res.status(200).json({
+            status: 'success',
+            type: 'message',
+            message: 'Xóa giỏ hàng thành công',
+            data: null,
         });
     } catch (error) {
         next(error);
@@ -51,52 +88,52 @@ exports.getCart = async (req, res, next) => {
     }
 };
 
-// Lỗi
 exports.updateCart = async (req, res, next) => {
     try {
-        const { productId, quantity, action } = req.body;
         const { cartId } = req.params;
-        let { itemArr } = await Cart.findById(cartId);
-        switch (action) {
-            case 'update':
-                const i = itemArr.findIndex(
-                    (item) => item.productId === productId
-                );
-                if (i) {
-                    itemArr[i] = { productId, quantity };
-                } else {
-                    itemArr = [...itemArr, { productId, quantity }];
-                }
-                break;
-            case 'delete':
-                itemArr = itemArr.filter(
-                    (item) => item.productId !== productId
-                );
-                if (itemArr.length === 0) {
-                    this.deleteCart;
-                }
-                break;
-        }
-        await Cart.findByIdAndUpdate(cartId, { itemArr: itemArr });
+        const { itemArr } = req.body;
+        const cart = await Cart.findByIdAndUpdate(
+            cartId,
+            { itemArr: itemArr },
+            { new: true, runValidators: true }
+        );
         res.status(200).json({
             status: 'success',
-            data: { itemArr },
+            type: 'object',
+            message: 'Cập nhật giỏ hàng thành công',
+            data: { cart },
         });
-    } catch (error) {}
+    } catch (error) {
+        next(error);
+    }
 };
 
 exports.deleteCart = async (req, res, next) => {
-    // code
     try {
         const { cartId } = req.params;
-        const { userId } = req.user;
         await Cart.findByIdAndDelete(cartId);
-        await User.findByIdAndUpdate(userId, { cart: '' });
+        await User.findOneAndUpdate({ cart: cartId }, { $unset: { cart: 1 } });
         res.status(200).json({
             status: 'success',
             type: 'message',
-            message: 'delete successfully',
+            message: 'Xóa giỏ hàng thành công',
             data: null,
         });
-    } catch (error) {}
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getAllCarts = async (req, res, next) => {
+    try {
+        const carts = await Cart.find({});
+        res.status(200).json({
+            status: 'success',
+            type: 'array',
+            message: 'Lấy tất cả giỏ hàng thành công',
+            data: { carts },
+        });
+    } catch (error) {
+        next(error);
+    }
 };
